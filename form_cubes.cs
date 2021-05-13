@@ -14,7 +14,7 @@ public class form_cubes : MonoBehaviour
 
     private Camera cam;
     private float m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight;
-
+    Shader shader;
 
     void Start(){
         //This sets the Camera view rectangle to be in the bottom corner of the screen
@@ -39,6 +39,10 @@ public class form_cubes : MonoBehaviour
                 cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 cube.transform.position = new Vector3(0.0f + 2.0f * x, 0.0f + 2.0f * y, 0.0f);
                 cube.GetComponent<Renderer>().material.color = Color.white;
+
+                shader = Shader.Find("problem1a");
+                cube.GetComponent<Renderer>().material.shader = shader;
+                
                 cube.name = "Cube-" + x.ToString() + '-' + y.ToString();
                 cubesY.Add(cube);
             }
