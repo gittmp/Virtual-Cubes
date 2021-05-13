@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,7 +28,7 @@ public class form_cubes : MonoBehaviour
         cam = Camera.main;
         cam.orthographic = true;
         cam.aspect = 1.0f;
-        cam.orthographicSize = (float) NoCubesX;
+        cam.orthographicSize = (float) Math.Max(Math.Max(NoCubesX, NoCubesY), 1);
         cam.transform.position = new Vector3((float) (NoCubesX - 1), (float) (NoCubesY - 1), -2.0f);
         cam.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
         cam.rect = new Rect(m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight);
