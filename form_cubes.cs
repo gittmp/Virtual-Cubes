@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wall : MonoBehaviour
+public class form_cubes : MonoBehaviour
 {
     public Vector3 AnglePerSecond = new Vector3(0.0f, 180.0f, 0.0f);
 
