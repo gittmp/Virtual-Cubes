@@ -11,7 +11,27 @@ public class form_cubes : MonoBehaviour
     public int NoCubesX = 3;
     public int NoCubesY = 3;
 
+    private Camera cam;
+    private float m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight;
+
+
     void Start(){
+        //This sets the Camera view rectangle to be in the bottom corner of the screen
+        m_ViewPositionX = 0.0f;
+        m_ViewPositionY = 0.0f;
+
+        //This sets the Camera view rectangle size
+        m_ViewWidth = 1.0f;
+        m_ViewHeight = 1.0f;
+
+        cam = Camera.main;
+        cam.orthographic = true;
+        cam.aspect = 1.0f;
+        cam.orthographicSize = (float) NoCubesX;
+        cam.transform.position = new Vector3((float) (NoCubesX - 1), (float) (NoCubesY - 1), -2.0f);
+        cam.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        cam.rect = new Rect(m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight);
+
         for(int x=0; x<NoCubesX; x++){
             List<GameObject> cubesY = new List<GameObject>();
             for(int y=0; y<NoCubesY; y++){
