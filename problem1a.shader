@@ -21,6 +21,7 @@ Shader "problem1a"
                 float2 uv : TEXCOORD0;
                 fixed4 diff : COLOR0;
                 float4 vertex : SV_POSITION;
+                float4 screenPos : TEXCOORD1;
             };
 
             v2f vert (appdata_base v)
@@ -42,6 +43,11 @@ Shader "problem1a"
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv) * i.diff;
+
+                float x = i.screenPos.x - 0.5f;
+                float y = i.screenPos.y - 0.5f;
+                float r = sqrt(x + y);
+
                 return col;
             }
             ENDCG
