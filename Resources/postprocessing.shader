@@ -1,8 +1,9 @@
-Shader "Hidden/NewImageEffectShader"
+Shader "postprocessing"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        // _Redness ("Red", Range(0, 1)) = 0
     }
     SubShader
     {
@@ -38,12 +39,13 @@ Shader "Hidden/NewImageEffectShader"
             }
 
             sampler2D _MainTex;
+            // float _Redness;
 
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-                // just invert the colors
                 col.rgb = 1 - col.rgb;
+                // col.r += _Redness;
                 return col;
             }
             ENDCG
