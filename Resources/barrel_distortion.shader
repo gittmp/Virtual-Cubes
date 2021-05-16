@@ -1,60 +1,58 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "barrel_distortion" {
-	Properties{
-		_Color("Main Color", Color) = (1,1,1,0.5)
-		_DistortionValue("Distortion Value", Range(0.0,2.0)) = 0.0
-		_MainTex("Texture", 2D) = "white" { }
+Shader "barrel_distortion" 
+{
+	Properties
+	{
+		_MainTex("MainTex", 2D) = "white" {}
+		_distortion("distortion", range(-3, 3)) = -0.7
+		_cubicDistortion("cubicDistortion", range(0, 3)) = 0.4
+		_scale("scale", range(0, 3)) = 1
 	}
-
-	SubShader{
-        Cull Off ZWrite Off ZTest Always
-
-		Tags{ "Queue" = "Transparent" }
-		Pass{
-			Blend SrcAlpha OneMinusSrcAlpha
+	SubShader
+	{
+		pass
+		{
+			Tags{ "LightMode" = "ForwardBase" }
+			Cull Off ZWrite Off ZTest Always
+			
 			CGPROGRAM
-			#pragma target 3.0
 			#pragma vertex vert
-			#pragma fragment frag	
-			#include "UnityCG.cginc"	
+			#pragma fragment frag
+			#pragma target 4.0 
+			#include "UnityCG.cginc"
 
-			half4 _Color;
-			float barrelPower = 1.0;
-			float4 _MainTex_ST;
-			float _DistortionValue;
+			float _distortion;
+			float _cubicDistortion;
+			float _scale;
+
 			sampler2D _MainTex;
+			fixed4 _MainTex_ST;
 
-
-			struct v2f {
-				float4  pos : SV_POSITION;
-				float2  uv : TEXCOORD0;
+			struct v2f 
+			{
+				fixed4 vertex : SV_POSITION;
+				fixed2 uv : TEXCOORD0;
 			};
 
-			half2 GetBarrelUV(half2 p) {
-				float theta = atan2(p.y, p.x);
-				float radius = length(p);
-				radius = pow(radius, barrelPower);
-				p.x = radius * cos(theta);
-				p.y = radius * sin(theta);
-				return (p + 0.5);
-			}
-
-			v2f vert(appdata_base v) {
+			v2f vert(appdata_full v) 
+			{
 				v2f o;
-				o.pos = UnityObjectToClipPos(v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
 				return o;
 			}
 
-			half4 frag(v2f i) : COLOR{
-				barrelPower = _DistortionValue;		
-				half2 barrelUV = GetBarrelUV(i.uv - 0.5);
-				half4 texcol = tex2D(_MainTex, barrelUV.xy);
-				return texcol*_Color;
+			fixed4 frag(v2f i) :COLOR
+			{
+				float2 h = i.uv.xy - float2(0.5, 0.5);
+				float r2 = h.x * h.x + h.y * h.y;
+				float f = 1.0 + r2 * (_distortion + _cubicDistortion * sqrt(r2));
+
+				i.uv = f * _scale * h + 0.5;
+
+				fixed4 col = tex2D(_MainTex, i.uv);
+				return col;
 			}
 			ENDCG
 		}
 	}
-		Fallback "VertexLit"
 }
