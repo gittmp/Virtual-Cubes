@@ -1,11 +1,11 @@
-Shader "barrel_distortion" 
+Shader "pincushion_distortion" 
 {
 	Properties
 	{
 		_MainTex("MainTex", 2D) = "white" {}
-		_distortion("distortion", range(-3, 3)) = -0.7
-		_cubicDistortion("cubicDistortion", range(0, 3)) = 0.4
-		_scale("scale", range(0, 3)) = 1
+		_c1("constant1", range(-3, 3)) = 0.4
+		_c2("constant2", range(0, 3)) = -0.7
+		_scaling("scaling factor", range(0.0, 25.0)) = 25.0
 	}
 	SubShader
 	{
@@ -20,9 +20,9 @@ Shader "barrel_distortion"
 			#pragma target 4.0 
 			#include "UnityCG.cginc"
 
-			float _distortion;
-			float _cubicDistortion;
-			float _scale;
+			float _c1;
+			float _c2;
+			float _scaling;
 
 			sampler2D _MainTex;
 			fixed4 _MainTex_ST;
@@ -44,12 +44,15 @@ Shader "barrel_distortion"
 			fixed4 frag(v2f i) :COLOR
 			{
 				float2 h = i.uv.xy - float2(0.5, 0.5);
-				float r2 = h.x * h.x + h.y * h.y;
-				float f = 1.0 + r2 * (_distortion + _cubicDistortion * sqrt(r2));
+				float r_d_2 = pow(h.x, 2.0) + pow(h.y, 2.0);
 
-				i.uv = f * _scale * h + 0.5;
+				float num = _c1 * r_d_2 + _c2 * pow(r_d_2, 2.0) + pow(_c1, 2.0) * pow(r_d_2, 2.0) + pow(_c2, 2.0) * pow(r_d_2, 4.0) + 2.0 * _c1 * _c2 * pow(r_d_2, 3.0);
+				float den = 1.0 + 4.0 * _c1 * r_d_2 + 6.0 * _c2 * pow(r_d_2, 2.0);
+				float f = num / den;
 
+				i.uv = f * _scaling * h + 0.5;
 				fixed4 col = tex2D(_MainTex, i.uv);
+				
 				return col;
 			}
 			ENDCG
