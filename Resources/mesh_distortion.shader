@@ -1,4 +1,4 @@
-Shader "LCA_correction"
+Shader "mesh_distortion"
 {
     Properties
     {
@@ -6,6 +6,7 @@ Shader "LCA_correction"
     }
     SubShader
     {
+        // No culling or depth
         Cull Off ZWrite Off ZTest Always
 
         Pass
@@ -15,12 +16,6 @@ Shader "LCA_correction"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
-
-            sampler2D _MainTex;
-
-            uniform half2 _RedShift;
-			uniform half2 _GreenShift;
-			uniform half2 _BlueShift;
 
             struct appdata
             {
@@ -42,13 +37,13 @@ Shader "LCA_correction"
                 return o;
             }
 
+            sampler2D _MainTex;
+
             fixed4 frag (v2f i) : SV_Target
             {
-                float red = tex2D(_MainTex, float2(i.uv + _RedShift)).r;
-                float green = tex2D(_MainTex, float2(i.uv + _GreenShift)).g;
-                float blue = tex2D(_MainTex, float2(i.uv + _BlueShift)).b;
-                fixed4 col = fixed4(red, green, blue, 1);
-
+                fixed4 col = tex2D(_MainTex, i.uv);
+                // just invert the colors
+                col.rgb = 1 - col.rgb;
                 return col;
             }
             ENDCG
