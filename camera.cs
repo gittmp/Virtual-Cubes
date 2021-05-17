@@ -5,11 +5,20 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class camera : MonoBehaviour
 {
-    public int ShaderType = 0;
+    [HideInInspector]
     public Material material;
+    
+    [HideInInspector]
     public Vector2 RedShift = new Vector2(0.005f, 0.0f);
+
+    [HideInInspector]
     public Vector2 GreenShift = new Vector2(0.0f, 0.0f);
+
+    [HideInInspector]
     public Vector2 BlueShift = new Vector2(-0.005f, 0.0f);
+    
+    [HideInInspector]
+    public int ShaderType = 0;
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
