@@ -14,8 +14,9 @@ public class form_cubes : MonoBehaviour
 
     private Camera cam;
     private float m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight;
-    Shader cube_shader;
-    Shader cam_shader;
+    Shader obj_shader;
+    GameObject plane;
+    // public RenderTexture rt;
 
     void Start(){
         //This sets the Camera view rectangle to be in the bottom corner of the screen
@@ -42,14 +43,25 @@ public class form_cubes : MonoBehaviour
                 cube.transform.position = new Vector3(0.0f + 2.0f * x, 0.0f + 2.0f * y, 0.0f);
                 
                 cube.GetComponent<Renderer>().material.color = Color.white;
-                cube_shader = Shader.Find("cubes");
-                cube.GetComponent<Renderer>().material.shader = cube_shader;
+                obj_shader = Shader.Find("cubes");
+                cube.GetComponent<Renderer>().material.shader = obj_shader;
 
                 cube.name = "Cube-" + x.ToString() + '-' + y.ToString();
                 cubesY.Add(cube);
             }
             cubes.Add(cubesY);
         }
+
+        plane = mesh_object.CreatePlane(2 * NoCubesX - 1, 2 * NoCubesY - 1);
+        plane.GetComponent<Renderer>().material.color = Color.white;
+
+        obj_shader = Shader.Find("cubes");
+        plane.GetComponent<Renderer>().material.shader = obj_shader;
+
+        // rt = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);
+        // rt.Create();
+
+        // Camera camera = GetComponent<Camera>();
     }
 
     // Update is called once per frame
