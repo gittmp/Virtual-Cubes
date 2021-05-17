@@ -15,10 +15,12 @@ public class form_cubes : MonoBehaviour
     private Camera cam;
     private float m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight;
     Shader obj_shader;
+    public RenderTexture render_tex;
     GameObject plane;
-    // public RenderTexture rt;
+    public Camera plane_camera;
 
     void Start(){
+        // PROBLEM 0
         //This sets the Camera view rectangle to be in the bottom corner of the screen
         m_ViewPositionX = 0.0f;
         m_ViewPositionY = 0.0f;
@@ -52,24 +54,46 @@ public class form_cubes : MonoBehaviour
             cubes.Add(cubesY);
         }
 
-        plane = mesh_object.CreatePlane(2 * NoCubesX - 1, 2 * NoCubesY - 1);
-        plane.GetComponent<Renderer>().material.color = Color.white;
+        // PROBLEM 3
+        // Create a render texture to project the camera onto the mesh
+        render_tex = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
+        render_tex.Create();
 
+        // Create a new camera to render the mesh to the screen
+        plane_camera = gameObject.AddComponent(typeof(Camera)) as Camera;
+        plane_camera.orthographic = true;
+        plane_camera.aspect = 1.0f;
+        plane_camera.orthographicSize = (float) Math.Max(Math.Max(NoCubesX, NoCubesY), 1.0);
+        plane_camera.transform.position = new Vector3((float) (NoCubesX - 1), (float) (NoCubesY - 1), -7.0f);
+        plane_camera.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        plane_camera.rect = new Rect(m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight);
+        
+        // Create mesh plane
+        plane = mesh_object.CreatePlane(2 * NoCubesX - 1, 2 * NoCubesY - 1);
+
+        // Apply the (camera rendered) texture to this plane
         obj_shader = Shader.Find("cubes");
         plane.GetComponent<Renderer>().material.shader = obj_shader;
-
-        // rt = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);
-        // rt.Create();
-
-        // Camera camera = GetComponent<Camera>();
+        plane.GetComponent<Renderer>().material.mainTexture = render_tex;
     }
 
     // Update is called once per frame
     void Update(){
+        // PROBLEM 0
         for(int x=0; x<NoCubesX; x++){
             for(int y=0; y<NoCubesY; y++){
                 cubes[x][y].transform.Rotate(AnglePerSecond * Time.deltaTime);
             }
+        }
+
+        if(cam.GetComponent<camera>().ShaderType == 3){
+            // Set the target texture of the main camera to the render texture
+            cam.targetTexture = render_tex;
+            plane_camera.targetDisplay = 0;
+        } else {
+            plane_camera.targetDisplay = 1;
+            cam.targetTexture = null;
+            cam.targetDisplay = 0;
         }
     }
 }

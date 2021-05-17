@@ -5,7 +5,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class camera : MonoBehaviour
 {
-    public int ShaderType = 1;
+    public int ShaderType = 0;
     public Material material;
     public Vector2 RedShift = new Vector2(0.005f, 0.0f);
     public Vector2 GreenShift = new Vector2(0.0f, 0.0f);
@@ -23,6 +23,8 @@ public class camera : MonoBehaviour
             material.SetVector("_RedShift", RedShift);
             material.SetVector("_GreenShift", GreenShift);
             material.SetVector("_BlueShift", BlueShift);
+        } else if(ShaderType == 3){
+            material = new Material(Shader.Find("basic"));
         }
 
         Graphics.Blit(source, destination, material);
