@@ -1,4 +1,4 @@
-Shader "problem1a"
+Shader "cubes"
 {
     Properties
     {

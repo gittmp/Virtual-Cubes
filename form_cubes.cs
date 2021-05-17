@@ -33,7 +33,7 @@ public class form_cubes : MonoBehaviour
         cam.transform.position = new Vector3((float) (NoCubesX - 1), (float) (NoCubesY - 1), -2.0f);
         cam.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
         cam.rect = new Rect(m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight);
-        cam.gameObject.AddComponent(typeof(postprocessingcamera));
+        cam.gameObject.AddComponent(typeof(camera));
 
         for(int x=0; x<NoCubesX; x++){
             List<GameObject> cubesY = new List<GameObject>();
@@ -42,7 +42,7 @@ public class form_cubes : MonoBehaviour
                 cube.transform.position = new Vector3(0.0f + 2.0f * x, 0.0f + 2.0f * y, 0.0f);
                 
                 cube.GetComponent<Renderer>().material.color = Color.white;
-                cube_shader = Shader.Find("problem1a");
+                cube_shader = Shader.Find("cubes");
                 cube.GetComponent<Renderer>().material.shader = cube_shader;
 
                 cube.name = "Cube-" + x.ToString() + '-' + y.ToString();

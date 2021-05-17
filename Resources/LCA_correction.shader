@@ -1,12 +1,20 @@
-Shader "Hidden/NewImageEffectShader"
+Shader "LCA_correction"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+
+        // _RedShiftX("Horizontal Red Shift Amount", Range(-1.0, 1.0)) = 0.005
+        // _RedShiftY("Vertical Red Shift Amount", Range(-1.0, 1.0)) = 0.0
+
+        // _GreenShiftX("Horizontal Green Shift Amount", Range(-1.0, 1.0)) = 0.0
+        // _GreenShiftY("Vertical Green Shift Amount", Range(-1.0, 1.0)) = 0.0
+
+        // _BlueShiftX("Horizontal Blue Shift Amount", Range(-1.0, 1.0)) = -0.005
+        // _BlueShiftY("Vertical Blue Shift Amount", Range(-1.0, 1.0)) = 0.0
     }
     SubShader
     {
-        // No culling or depth
         Cull Off ZWrite Off ZTest Always
 
         Pass
@@ -16,6 +24,21 @@ Shader "Hidden/NewImageEffectShader"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+
+            sampler2D _MainTex;
+
+            // float _RedShiftX;
+            // float _RedShiftY;
+
+            // float _GreenShiftX;
+            // float _GreenShiftY;
+
+            // float _BlueShiftX;
+            // float _BlueShiftY;
+
+            uniform half2 _RedShift;
+			uniform half2 _GreenShift;
+			uniform half2 _BlueShift;
 
             struct appdata
             {
@@ -37,13 +60,13 @@ Shader "Hidden/NewImageEffectShader"
                 return o;
             }
 
-            sampler2D _MainTex;
-
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv);
-                // just invert the colors
-                col.rgb = 1 - col.rgb;
+                float red = tex2D(_MainTex, float2(i.uv + _RedShift)).r;
+                float green = tex2D(_MainTex, float2(i.uv + _GreenShift)).g;
+                float blue = tex2D(_MainTex, float2(i.uv + _BlueShift)).b;
+                fixed4 col = fixed4(red, green, blue, 1);
+
                 return col;
             }
             ENDCG
