@@ -83,7 +83,7 @@ public class form_cubes : MonoBehaviour
         plane.hideFlags = HideFlags.HideInHierarchy;
 
         // Apply the (camera rendered) texture to this plane
-        obj_shader = Shader.Find("cubes");
+        obj_shader = Shader.Find("mesh_distortion");
         plane.GetComponent<Renderer>().material.shader = obj_shader;
         plane.GetComponent<Renderer>().material.mainTexture = render_tex;
     }
