@@ -3,16 +3,17 @@ Shader "Shaders/pincushion_correction"
 	Properties
 	{
 		_MainTex("MainTex", 2D) = "white" {}
-		_c1("constant1", range(-3, 3)) = 0.4
-		_c2("constant2", range(0, 3)) = -0.7
-		_scaling("scaling factor", range(0.0, 25.0)) = 25.0
+		_c1("constant1", Float) = 0.4
+		_c2("constant2", Float) = -0.7
+		_scaling("scaling factor", Float) = 25.0
 	}
 	SubShader
 	{
+		Cull Off ZWrite Off ZTest Always
+
 		pass
 		{
 			Tags{ "LightMode" = "ForwardBase" }
-			Cull Off ZWrite Off ZTest Always
 			
 			CGPROGRAM
 			#pragma vertex vert
@@ -56,6 +57,7 @@ Shader "Shaders/pincushion_correction"
 				float f = num / den;
 
 				i.uv = f * _scaling * h + 0.5;
+
 				fixed4 col = tex2D(_MainTex, i.uv);
 				
 				return col;

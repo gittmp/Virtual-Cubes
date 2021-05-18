@@ -13,8 +13,9 @@ Shader "Shaders/basic"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-
             #include "UnityCG.cginc"
+
+            sampler2D _MainTex;
 
             struct appdata
             {
@@ -35,9 +36,6 @@ Shader "Shaders/basic"
                 o.uv = v.uv;
                 return o;
             }
-
-            sampler2D _MainTex;
-            // float _Redness;
 
             fixed4 frag (v2f i) : SV_Target
             {

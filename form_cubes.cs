@@ -89,7 +89,7 @@ public class form_cubes : MonoBehaviour
                 cubes[x][y].transform.Rotate(AnglePerSecond * Time.deltaTime);
             }
         }
-
+        
         // Update camera fields given LCA colour shift parameters (problem 2)
         cam.GetComponent<camera>().ShaderType = ShaderType;
         cam.GetComponent<camera>().RedShift = RedShift;
@@ -135,12 +135,5 @@ public class form_cubes : MonoBehaviour
         obj_shader = Shader.Find("Shaders/mesh_distortion");
         BlenderPlane.GetComponent<Renderer>().material.shader = obj_shader;
         BlenderPlane.GetComponent<Renderer>().material.mainTexture = render_tex;
-
-        // Set parameters of browns model
-        // barrel: (0.3f, -0.4f, 23.0f), (0.1f, -0.2f, 50.0f) | pincushion: (0.4f, -0.7f, 28.0f)
-        float C1 = 0.3f;
-        float C2 = -0.4f;
-        float ScaleFactor = 23.0f;
-        BlenderPlane.GetComponent<Renderer>().material.SetVector("_Parameters", new Vector3(C1, C2, ScaleFactor));
     }
 }
