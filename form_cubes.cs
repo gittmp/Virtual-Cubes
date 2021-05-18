@@ -32,6 +32,7 @@ public class form_cubes : MonoBehaviour
     // Problem 3c inverses
     private RenderTexture inv_render;
     private GameObject InvPlane;
+    // public Vector3 ShaderParams = new Vector3(0.4f, -0.7f, 28.0f);
 
     // Start method
     void Start(){
@@ -81,12 +82,12 @@ public class form_cubes : MonoBehaviour
         plane_camera.transform.position = new Vector3(2.0f, 2.0f, -10.0f);
 
         // Generate plane from Blender
-        BlenderPlane = createPlane(BlenderPlane, -14.0f, render_tex);
+        BlenderPlane = createPlane(BlenderPlane);
 
         // PROBLEM 3c
         inv_render = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
         inv_render.Create();
-        InvPlane = createPlane(InvPlane, -22.0f, inv_render);
+        InvPlane = createPlane(InvPlane, "inverse");
     }
 
     // Update method
@@ -106,7 +107,8 @@ public class form_cubes : MonoBehaviour
 
         // PROBLEM 3
         // Update geometry of plane (plane 1, 2, or 3) given users parameters
-        BlenderPlane = createPlane(BlenderPlane, -14.0f, render_tex);
+        BlenderPlane = createPlane(BlenderPlane);
+        InvPlane = createPlane(InvPlane, "inverse");
 
         // If problem 3, set screen to display output of second camera
         if(ShaderType == 3){
@@ -124,7 +126,7 @@ public class form_cubes : MonoBehaviour
         }
     }
 
-    GameObject createPlane(GameObject plane, float z, RenderTexture tex)
+    GameObject createPlane(GameObject plane, String version = "")
     {
         Destroy(plane);
 
@@ -139,14 +141,27 @@ public class form_cubes : MonoBehaviour
             plane.transform.localScale = new Vector3(3f, 3f, 0.0f);
         }
         
-        plane.transform.position = new Vector3(2.0f, 2.0f, z);
+        if(version == "inverse"){
+            plane.transform.position = new Vector3(2.0f, 2.0f, -22.0f);
+        } else {
+            plane.transform.position = new Vector3(2.0f, 2.0f, -14.0f);
+        }
+
         plane.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
         plane.hideFlags = HideFlags.HideInHierarchy;
 
         // Apply the (camera rendered) texture to this plane
-        obj_shader = Shader.Find("Shaders/mesh_distortion");
+
+        if(version == "inverse"){
+            obj_shader = Shader.Find("Shaders/inverse_mesh");
+            // plane.GetComponent<Renderer>().material.SetVector("_Params", new Vector3(0.4f, -0.7f, 28.0f));
+            plane.GetComponent<Renderer>().material.mainTexture = inv_render;
+        } else {
+            obj_shader = Shader.Find("Shaders/mesh_distortion");
+            plane.GetComponent<Renderer>().material.mainTexture = render_tex;
+        }
+
         plane.GetComponent<Renderer>().material.shader = obj_shader;
-        plane.GetComponent<Renderer>().material.mainTexture = tex;
 
         return plane;
     }
