@@ -1,4 +1,4 @@
-Shader "pincushion_correction" 
+Shader "Shaders/pincushion_correction" 
 {
 	Properties
 	{

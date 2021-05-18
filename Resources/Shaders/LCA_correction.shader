@@ -1,4 +1,4 @@
-Shader "basic"
+Shader "Shaders/LCA_correction"
 {
     Properties
     {
@@ -15,6 +15,12 @@ Shader "basic"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+
+            sampler2D _MainTex;
+
+            uniform half2 _RedShift;
+			uniform half2 _GreenShift;
+			uniform half2 _BlueShift;
 
             struct appdata
             {
@@ -36,12 +42,13 @@ Shader "basic"
                 return o;
             }
 
-            sampler2D _MainTex;
-            // float _Redness;
-
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv);
+                float red = tex2D(_MainTex, float2(i.uv + _RedShift)).r;
+                float green = tex2D(_MainTex, float2(i.uv + _GreenShift)).g;
+                float blue = tex2D(_MainTex, float2(i.uv + _BlueShift)).b;
+                fixed4 col = fixed4(red, green, blue, 1);
+
                 return col;
             }
             ENDCG

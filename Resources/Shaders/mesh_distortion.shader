@@ -1,6 +1,6 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "mesh_distortion"
+Shader "Shaders/mesh_distortion"
 {
 	Properties
 	{

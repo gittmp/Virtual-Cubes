@@ -22,18 +22,16 @@ public class camera : MonoBehaviour
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if(ShaderType == 0){
-            material = new Material(Shader.Find("basic"));
+        if(ShaderType == 0 || ShaderType == 3){
+            material = new Material(Shader.Find("Shaders/basic"));
         } else if(ShaderType == 1){
-            material = new Material(Shader.Find("pincushion_correction"));
+            material = new Material(Shader.Find("Shaders/pincushion_correction"));
         } else if(ShaderType == 2){
-            material = new Material(Shader.Find("LCA_correction"));
+            material = new Material(Shader.Find("Shaders/LCA_correction"));
 
             material.SetVector("_RedShift", RedShift);
             material.SetVector("_GreenShift", GreenShift);
             material.SetVector("_BlueShift", BlueShift);
-        } else if(ShaderType == 3){
-            material = new Material(Shader.Find("basic"));
         }
 
         Graphics.Blit(source, destination, material);

@@ -1,4 +1,4 @@
-Shader "cubes"
+Shader "Shaders/cubes"
 {
     Properties
     {
