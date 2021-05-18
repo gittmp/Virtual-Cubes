@@ -320,11 +320,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: NoCubes.x
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: NoCubes.y
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: m_Enabled

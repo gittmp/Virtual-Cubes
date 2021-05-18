@@ -34,7 +34,8 @@ public class form_cubes : MonoBehaviour
     public float ScaleFactor = 23.0f;
     private Vector3 C1C2ScaleFactor;
 
-
+    // Selecting plane to render to (problem 3)
+    public int SelectPlane = 0;
 
     // Start method
     void Start(){
@@ -82,28 +83,31 @@ public class form_cubes : MonoBehaviour
         plane_camera = gameObject.AddComponent(typeof(Camera)) as Camera;
         plane_camera.orthographic = true;
         plane_camera.aspect = 1.0f;
-        plane_camera.orthographicSize = (float) Math.Max(Math.Max(NoCubes[0], NoCubes[1]), 1.0);
-        plane_camera.transform.position = new Vector3((float) (NoCubes[0] - 1), (float) (NoCubes[1] - 1), -10.0f);
-        plane_camera.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        plane_camera.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
         plane_camera.rect = new Rect(m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight);
+        plane_camera.orthographicSize = 3.0f;
+        plane_camera.transform.position = new Vector3(2.0f, 2.0f, -10.0f);
 
         // Generate plane from Blender
-        BlenderPlane = GameObject.Find("plane1");
-        BlenderPlane = Instantiate(Resources.Load("plane1") )as GameObject;
-        BlenderPlane.transform.localScale = new Vector3(NoCubes[0], NoCubes[1], 1);
-        BlenderPlane.transform.position = new Vector3((float) (NoCubes[0] - 1), (float) (NoCubes[1] - 1), -8.0f);
+        if (SelectPlane == 0){
+            BlenderPlane = Instantiate(Resources.Load("Planes/plane1")) as GameObject;
+            BlenderPlane.transform.localScale = new Vector3(1.5f, 1.5f, 0.0f);
+        } else if (SelectPlane == 1){
+            BlenderPlane = Instantiate(Resources.Load("Planes/plane2")) as GameObject;
+            BlenderPlane.transform.localScale = new Vector3(3f, 3f, 0.0f);
+        } else if (SelectPlane == 2){
+            BlenderPlane = Instantiate(Resources.Load("Planes/plane3")) as GameObject;
+            BlenderPlane.transform.localScale = new Vector3(3f, 3f, 0.0f);
+        }
+        
+        BlenderPlane.transform.position = new Vector3(2.0f, 2.0f, -14.0f);
+        BlenderPlane.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
         BlenderPlane.hideFlags = HideFlags.HideInHierarchy;
-
-        // Create mesh plane
-        // plane = mesh_object.CreatePlane(2 * NoCubes[0] - 1, 2 * NoCubes[1] - 1);
-        // plane.hideFlags = HideFlags.HideInHierarchy;
 
         // Apply the (camera rendered) texture to this plane
         obj_shader = Shader.Find("mesh_distortion");
         BlenderPlane.GetComponent<Renderer>().material.shader = obj_shader;
         BlenderPlane.GetComponent<Renderer>().material.mainTexture = render_tex;
-        // plane.GetComponent<Renderer>().material.shader = obj_shader;
-        // plane.GetComponent<Renderer>().material.mainTexture = render_tex;
     }
 
     // Update method

@@ -99,7 +99,6 @@ Shader "mesh_distortion"
 
 				v.uv = f * _scaling * h + 0.5;
 
-
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 // o.vertex = brownTransformation(o.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
