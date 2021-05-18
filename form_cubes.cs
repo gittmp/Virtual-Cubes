@@ -27,12 +27,12 @@ public class form_cubes : MonoBehaviour
     private GameObject BlenderPlane;
 
     // Selecting plane to render to (problem 3)
-    public int SelectPlane = 0;
+    public int MeshComplexity = 0;
 
     // Problem 3c inverses
     private RenderTexture inv_render;
     private GameObject InvPlane;
-    // public Vector3 ShaderParams = new Vector3(0.4f, -0.7f, 28.0f);
+    public Vector3 ShaderParams = new Vector3(1.0f, -1.6f, 2.5f);
 
     // Start method
     void Start(){
@@ -88,6 +88,8 @@ public class form_cubes : MonoBehaviour
         inv_render = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
         inv_render.Create();
         InvPlane = createPlane(InvPlane, "inverse");
+        InvPlane.GetComponent<Renderer>().material.SetVector("_Params", ShaderParams);
+
     }
 
     // Update method
@@ -110,6 +112,12 @@ public class form_cubes : MonoBehaviour
         BlenderPlane = createPlane(BlenderPlane);
         InvPlane = createPlane(InvPlane, "inverse");
 
+        // for plane1 (-0.13, -1.6, 2.5)
+        // for plane1 (-0.74, 0.19, 2.5)
+        // for plane2 (-0.87, 0.28, 2.8)
+        // for plane3 (-1.5, 0.8, 5.0)
+        InvPlane.GetComponent<Renderer>().material.SetVector("_Params", ShaderParams);
+
         // If problem 3, set screen to display output of second camera
         if(ShaderType == 3){
             // Set the target texture of the main camera to the render texture
@@ -130,13 +138,13 @@ public class form_cubes : MonoBehaviour
     {
         Destroy(plane);
 
-        if (SelectPlane == 0 || SelectPlane > 2){
+        if (MeshComplexity == 0 || MeshComplexity > 2){
             plane = Instantiate(Resources.Load("Planes/plane1")) as GameObject;
             plane.transform.localScale = new Vector3(1.5f, 1.5f, 0.0f);
-        } else if (SelectPlane == 1){
+        } else if (MeshComplexity == 1){
             plane = Instantiate(Resources.Load("Planes/plane2")) as GameObject;
             plane.transform.localScale = new Vector3(3f, 3f, 0.0f);
-        } else if (SelectPlane == 2){
+        } else if (MeshComplexity == 2){
             plane = Instantiate(Resources.Load("Planes/plane3")) as GameObject;
             plane.transform.localScale = new Vector3(3f, 3f, 0.0f);
         }
@@ -154,7 +162,6 @@ public class form_cubes : MonoBehaviour
 
         if(version == "inverse"){
             obj_shader = Shader.Find("Shaders/inverse_mesh");
-            // plane.GetComponent<Renderer>().material.SetVector("_Params", new Vector3(0.4f, -0.7f, 28.0f));
             plane.GetComponent<Renderer>().material.mainTexture = inv_render;
         } else {
             obj_shader = Shader.Find("Shaders/mesh_distortion");
