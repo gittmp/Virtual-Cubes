@@ -8,7 +8,7 @@ public class form_cubes : MonoBehaviour
     // SLIDER FOR SELECTING SHADER (corresponding to a different problem aim)
     public int ShaderType = 0;
 
-    // Problem 0 parameters
+    // Problem 0 parameterss
     public Vector2 NoCubes = new Vector2(3, 3);
     public Vector3 AnglePerSecond = new Vector3(0.0f, 180.0f, 0.0f);
     private List<List<GameObject>> cubes = new List<List<GameObject>>();
@@ -17,15 +17,24 @@ public class form_cubes : MonoBehaviour
     private float m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight;
     private Shader obj_shader;
 
-    // Problem 3 parameters
-    private RenderTexture render_tex;
-    private GameObject plane;
-    private Camera plane_camera;
-
     // Fields for camera parameters (problem 2)
     public Vector2 RedShift = new Vector2(0.005f, 0.0f);
     public Vector2 GreenShift = new Vector2(0.0f, 0.0f);
     public Vector2 BlueShift = new Vector2(-0.005f, 0.0f);
+
+    // Problem 3 parameters
+    private RenderTexture render_tex;
+    private GameObject plane;
+    private Camera plane_camera;
+    private GameObject BlenderPlane;
+
+// barrel: (0.3f, -0.4f, 23.0f), (0.1f, -0.2f, 50.0f) | pincushion: (0.4f, -0.7f, 28.0f)
+    public float C1 = 0.3f;  
+    public float C2 = -0.4f;
+    public float ScaleFactor = 23.0f;
+    private Vector3 C1C2ScaleFactor;
+
+
 
     // Start method
     void Start(){
@@ -74,22 +83,36 @@ public class form_cubes : MonoBehaviour
         plane_camera.orthographic = true;
         plane_camera.aspect = 1.0f;
         plane_camera.orthographicSize = (float) Math.Max(Math.Max(NoCubes[0], NoCubes[1]), 1.0);
-        plane_camera.transform.position = new Vector3((float) (NoCubes[0] - 1), (float) (NoCubes[1] - 1), -7.0f);
+        plane_camera.transform.position = new Vector3((float) (NoCubes[0] - 1), (float) (NoCubes[1] - 1), -10.0f);
         plane_camera.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
         plane_camera.rect = new Rect(m_ViewPositionX, m_ViewPositionY, m_ViewWidth, m_ViewHeight);
 
+        // Generate plane from Blender
+        BlenderPlane = GameObject.Find("plane1");
+        BlenderPlane = Instantiate(Resources.Load("plane1") )as GameObject;
+        BlenderPlane.transform.localScale = new Vector3(NoCubes[0], NoCubes[1], 1);
+        BlenderPlane.transform.position = new Vector3((float) (NoCubes[0] - 1), (float) (NoCubes[1] - 1), -8.0f);
+        BlenderPlane.hideFlags = HideFlags.HideInHierarchy;
+
         // Create mesh plane
-        plane = mesh_object.CreatePlane(2 * NoCubes[0] - 1, 2 * NoCubes[1] - 1);
-        plane.hideFlags = HideFlags.HideInHierarchy;
+        // plane = mesh_object.CreatePlane(2 * NoCubes[0] - 1, 2 * NoCubes[1] - 1);
+        // plane.hideFlags = HideFlags.HideInHierarchy;
 
         // Apply the (camera rendered) texture to this plane
         obj_shader = Shader.Find("mesh_distortion");
-        plane.GetComponent<Renderer>().material.shader = obj_shader;
-        plane.GetComponent<Renderer>().material.mainTexture = render_tex;
+        BlenderPlane.GetComponent<Renderer>().material.shader = obj_shader;
+        BlenderPlane.GetComponent<Renderer>().material.mainTexture = render_tex;
+        // plane.GetComponent<Renderer>().material.shader = obj_shader;
+        // plane.GetComponent<Renderer>().material.mainTexture = render_tex;
     }
 
     // Update method
     void Update(){
+        // Update parameters for problem 3 browns model
+        C1C2ScaleFactor = new Vector3(C1, C2, ScaleFactor);
+        BlenderPlane.GetComponent<Renderer>().material.SetVector("_Parameters", C1C2ScaleFactor);
+
+
         // Update camera fields
         cam.GetComponent<camera>().ShaderType = ShaderType;
         cam.GetComponent<camera>().RedShift = RedShift;

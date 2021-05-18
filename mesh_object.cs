@@ -13,10 +13,10 @@ public static class mesh_object
         
         mesh.vertices = new Vector3[]
         {
-            new Vector3(-1.0f, -1.0f, -5.0f),
-            new Vector3(width, -1.0f, -5.0f),
-            new Vector3(-1.0f, height, -5.0f),
-            new Vector3(width, height, -5.0f)
+            new Vector3(-1.0f, -1.0f, -8.0f),
+            new Vector3(width, -1.0f, -8.0f),
+            new Vector3(-1.0f, height, -8.0f),
+            new Vector3(width, height, -8.0f)
         };
 
         mesh.uv = new Vector2[]
