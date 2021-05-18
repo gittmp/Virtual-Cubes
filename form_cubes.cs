@@ -23,12 +23,15 @@ public class form_cubes : MonoBehaviour
 
     // Problem 3 parameters
     private RenderTexture render_tex;
-    private GameObject plane;
     private Camera plane_camera;
     private GameObject BlenderPlane;
 
     // Selecting plane to render to (problem 3)
     public int SelectPlane = 0;
+
+    // Problem 3c inverses
+    private RenderTexture inv_render;
+    private GameObject InvPlane;
 
     // Start method
     void Start(){
@@ -78,7 +81,12 @@ public class form_cubes : MonoBehaviour
         plane_camera.transform.position = new Vector3(2.0f, 2.0f, -10.0f);
 
         // Generate plane from Blender
-        createPlane();
+        BlenderPlane = createPlane(BlenderPlane, -14.0f, render_tex);
+
+        // PROBLEM 3c
+        inv_render = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
+        inv_render.Create();
+        InvPlane = createPlane(InvPlane, -22.0f, inv_render);
     }
 
     // Update method
@@ -98,42 +106,48 @@ public class form_cubes : MonoBehaviour
 
         // PROBLEM 3
         // Update geometry of plane (plane 1, 2, or 3) given users parameters
-        createPlane();
+        BlenderPlane = createPlane(BlenderPlane, -14.0f, render_tex);
 
         // If problem 3, set screen to display output of second camera
         if(ShaderType == 3){
             // Set the target texture of the main camera to the render texture
             cam.targetTexture = render_tex;
             plane_camera.targetDisplay = 0;
+        } else if(ShaderType == 4){
+            cam.targetTexture = render_tex;
+            plane_camera.targetTexture = inv_render;
         } else {
+            plane_camera.targetTexture = null;
             plane_camera.targetDisplay = 1;
             cam.targetTexture = null;
             cam.targetDisplay = 0;
         }
     }
 
-    void createPlane()
+    GameObject createPlane(GameObject plane, float z, RenderTexture tex)
     {
-        Destroy(BlenderPlane);
+        Destroy(plane);
 
         if (SelectPlane == 0 || SelectPlane > 2){
-            BlenderPlane = Instantiate(Resources.Load("Planes/plane1")) as GameObject;
-            BlenderPlane.transform.localScale = new Vector3(1.5f, 1.5f, 0.0f);
+            plane = Instantiate(Resources.Load("Planes/plane1")) as GameObject;
+            plane.transform.localScale = new Vector3(1.5f, 1.5f, 0.0f);
         } else if (SelectPlane == 1){
-            BlenderPlane = Instantiate(Resources.Load("Planes/plane2")) as GameObject;
-            BlenderPlane.transform.localScale = new Vector3(3f, 3f, 0.0f);
+            plane = Instantiate(Resources.Load("Planes/plane2")) as GameObject;
+            plane.transform.localScale = new Vector3(3f, 3f, 0.0f);
         } else if (SelectPlane == 2){
-            BlenderPlane = Instantiate(Resources.Load("Planes/plane3")) as GameObject;
-            BlenderPlane.transform.localScale = new Vector3(3f, 3f, 0.0f);
+            plane = Instantiate(Resources.Load("Planes/plane3")) as GameObject;
+            plane.transform.localScale = new Vector3(3f, 3f, 0.0f);
         }
         
-        BlenderPlane.transform.position = new Vector3(2.0f, 2.0f, -14.0f);
-        BlenderPlane.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-        BlenderPlane.hideFlags = HideFlags.HideInHierarchy;
+        plane.transform.position = new Vector3(2.0f, 2.0f, z);
+        plane.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        plane.hideFlags = HideFlags.HideInHierarchy;
 
         // Apply the (camera rendered) texture to this plane
         obj_shader = Shader.Find("Shaders/mesh_distortion");
-        BlenderPlane.GetComponent<Renderer>().material.shader = obj_shader;
-        BlenderPlane.GetComponent<Renderer>().material.mainTexture = render_tex;
+        plane.GetComponent<Renderer>().material.shader = obj_shader;
+        plane.GetComponent<Renderer>().material.mainTexture = tex;
+
+        return plane;
     }
 }
