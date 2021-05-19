@@ -22,7 +22,7 @@ public class camera : MonoBehaviour
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if(ShaderType == 0 || ShaderType == 3){
+        if(ShaderType == 0 || ShaderType > 2){
             material = new Material(Shader.Find("Shaders/basic"));
         } else if(ShaderType == 1){
             material = new Material(Shader.Find("Shaders/pincushion_correction"));

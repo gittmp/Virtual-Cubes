@@ -67,28 +67,75 @@ public class form_cubes : MonoBehaviour
             cubes.Add(cubesY);
         }
 
-        // PROBLEM 3
-        // Create a render texture to project the camera onto the mesh
-        render_tex = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
-        render_tex.Create();
+        cam.GetComponent<camera>().ShaderType = ShaderType;
 
-        // Create a new camera to render the mesh to the screen
-        plane_camera = gameObject.AddComponent(typeof(Camera)) as Camera;
-        plane_camera.orthographic = true;
-        plane_camera.aspect = 1.0f;
-        plane_camera.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-        plane_camera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
-        plane_camera.orthographicSize = 3.0f;
-        plane_camera.transform.position = new Vector3(2.0f, 2.0f, -10.0f);
+        if(ShaderType == 2){
+            // Update camera fields given LCA colour shift parameters (problem 2)
+            cam.GetComponent<camera>().RedShift = RedShift;
+            cam.GetComponent<camera>().GreenShift = GreenShift;
+            cam.GetComponent<camera>().BlueShift = BlueShift;
 
-        // Generate plane from Blender
-        BlenderPlane = createPlane(BlenderPlane);
+            plane_camera.targetTexture = null;
+            plane_camera.targetDisplay = 1;
+            cam.targetTexture = null;
+            cam.targetDisplay = 0;
+        } else if(ShaderType == 3){
+            // PROBLEM 3
+            // Create a render texture to project the camera onto the mesh
+            render_tex = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
+            render_tex.Create();
 
-        // PROBLEM 3c
-        inv_render = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
-        inv_render.Create();
-        InvPlane = createPlane(InvPlane, "inverse");
-        InvPlane.GetComponent<Renderer>().material.SetVector("_Params", ShaderParams);
+            // Create a new camera to render the mesh to the screen
+            plane_camera = gameObject.AddComponent(typeof(Camera)) as Camera;
+            plane_camera.orthographic = true;
+            plane_camera.aspect = 1.0f;
+            plane_camera.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+            plane_camera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
+            plane_camera.orthographicSize = 3.0f;
+            plane_camera.transform.position = new Vector3(2.0f, 2.0f, -10.0f);
+
+            // Generate plane from Blender
+            BlenderPlane = createPlane(BlenderPlane);
+
+            // Set the target texture of the main camera to the render texture
+            cam.targetTexture = render_tex;
+            plane_camera.targetDisplay = 0;
+        } else if(ShaderType == 4){
+            // PROBLEM 3
+            // Create a render texture to project the camera onto the mesh
+            render_tex = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
+            render_tex.Create();
+
+            // Create a new camera to render the mesh to the screen
+            plane_camera = gameObject.AddComponent(typeof(Camera)) as Camera;
+            plane_camera.orthographic = true;
+            plane_camera.aspect = 1.0f;
+            plane_camera.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+            plane_camera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
+            plane_camera.orthographicSize = 3.0f;
+            plane_camera.transform.position = new Vector3(2.0f, 2.0f, -10.0f);
+
+            // Generate plane from Blender
+            BlenderPlane = createPlane(BlenderPlane);
+
+            // PROBLEM 3c
+            inv_render = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
+            inv_render.Create();
+            InvPlane = createPlane(InvPlane, "inverse");
+            // for plane1 (-0.13, -1.6, 2.5)
+            // for plane1 (-0.74, 0.19, 2.5)
+            // for plane2 (-0.87, 0.28, 2.8)
+            // for plane3 (-1.5, 0.8, 5.0)
+            InvPlane.GetComponent<Renderer>().material.SetVector("_Params", ShaderParams);
+            
+            cam.targetTexture = render_tex;
+            plane_camera.targetTexture = inv_render;
+        } else {
+            // plane_camera.targetTexture = null;
+            // plane_camera.targetDisplay = 1;
+            cam.targetTexture = null;
+            cam.targetDisplay = 0;
+        }
 
     }
 
@@ -99,38 +146,6 @@ public class form_cubes : MonoBehaviour
             for(int y=0; y<NoCubes[1]; y++){
                 cubes[x][y].transform.Rotate(AnglePerSecond * Time.deltaTime);
             }
-        }
-        
-        // Update camera fields given LCA colour shift parameters (problem 2)
-        cam.GetComponent<camera>().ShaderType = ShaderType;
-        cam.GetComponent<camera>().RedShift = RedShift;
-        cam.GetComponent<camera>().GreenShift = GreenShift;
-        cam.GetComponent<camera>().BlueShift = BlueShift;
-
-        // PROBLEM 3
-        // Update geometry of plane (plane 1, 2, or 3) given users parameters
-        BlenderPlane = createPlane(BlenderPlane);
-        InvPlane = createPlane(InvPlane, "inverse");
-
-        // for plane1 (-0.13, -1.6, 2.5)
-        // for plane1 (-0.74, 0.19, 2.5)
-        // for plane2 (-0.87, 0.28, 2.8)
-        // for plane3 (-1.5, 0.8, 5.0)
-        InvPlane.GetComponent<Renderer>().material.SetVector("_Params", ShaderParams);
-
-        // If problem 3, set screen to display output of second camera
-        if(ShaderType == 3){
-            // Set the target texture of the main camera to the render texture
-            cam.targetTexture = render_tex;
-            plane_camera.targetDisplay = 0;
-        } else if(ShaderType == 4){
-            cam.targetTexture = render_tex;
-            plane_camera.targetTexture = inv_render;
-        } else {
-            plane_camera.targetTexture = null;
-            plane_camera.targetDisplay = 1;
-            cam.targetTexture = null;
-            cam.targetDisplay = 0;
         }
     }
 
