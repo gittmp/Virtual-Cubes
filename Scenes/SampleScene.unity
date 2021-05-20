@@ -134,6 +134,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Inverse
       objectReference: {fileID: 0}
+    - target: {fileID: 3741617316897091845, guid: 0aab3ceb1b7b642d8a72fac06f80bdd7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9032176510173306247, guid: 0aab3ceb1b7b642d8a72fac06f80bdd7, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -388,20 +392,32 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
+      propertyPath: RedShift.x
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: ShaderType
-      value: 1
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
+      propertyPath: BlueShift.x
+      value: -0.03
       objectReference: {fileID: 0}
     - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: SelectPlane
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
+      propertyPath: DistortionType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: MeshComplexity
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3014661953683521008, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: m_Name
-      value: Cubes
+      value: Distortion
       objectReference: {fileID: 0}
     - target: {fileID: 9004382590164194442, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: m_RootOrder

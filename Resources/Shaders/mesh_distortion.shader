@@ -6,7 +6,6 @@ Shader "Shaders/mesh_distortion"
 		_c1("constant1", Float) = 0.3
 		_c2("constant2", Float) = -0.4
 		_scaling("scaling factor", Float) = 23.0
-		// other barrel: (0.3f, -0.4f, 23.0f), (0.1f, -0.2f, 50.0f) | pincushion: (0.4f, -0.7f, 28.0f)
 	}
 	SubShader
 	{
@@ -39,7 +38,6 @@ Shader "Shaders/mesh_distortion"
             v2f vert (appdata v)
             {
                 v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
 
 				float2 h = v.uv.xy - float2(0.5, 0.5);
 				float r_d_2 = pow(h.x, 2.0) + pow(h.y, 2.0);

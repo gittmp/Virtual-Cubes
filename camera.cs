@@ -18,17 +18,22 @@ public class camera : MonoBehaviour
     public Vector2 BlueShift = new Vector2(-0.005f, 0.0f);
     
     [HideInInspector]
-    public int ShaderType = 0;
+    public int DistortionType = 0;
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if(ShaderType == 0 || ShaderType > 2){
+        // Attach image effects to camera based on problem
+        if(DistortionType == 0 || DistortionType > 2){
+            // Basic camera (no effects) for problems 0 + 3
             material = new Material(Shader.Find("Shaders/basic"));
-        } else if(ShaderType == 1){
+        } else if(DistortionType == 1){
+            // Apply the pincushion distortion to the rendered image (problem 1)
             material = new Material(Shader.Find("Shaders/pincushion_correction"));
-        } else if(ShaderType == 2){
+        } else if(DistortionType == 2){
+            // Apply LCA correction to the rendered image (problem 2)
             material = new Material(Shader.Find("Shaders/LCA_correction"));
 
+            // Set the level of aberration
             material.SetVector("_RedShift", RedShift);
             material.SetVector("_GreenShift", GreenShift);
             material.SetVector("_BlueShift", BlueShift);

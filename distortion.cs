@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class form_cubes : MonoBehaviour
+public class distortion : MonoBehaviour
 {
-    // SLIDER FOR SELECTING SHADER (corresponding to a different problem aim)
-    public int ShaderType = 0;
+    // VAR FOR SELECTING SHADER (corresponding to a different problems)
+    public int DistortionType = 0;
 
-    // Problem 0 parameterss
+    // Problem 0 parameters
     public Vector2 NoCubes = new Vector2(3, 3);
     public Vector3 AnglePerSecond = new Vector3(0.0f, 180.0f, 0.0f);
     private List<List<GameObject>> cubes = new List<List<GameObject>>();
@@ -32,7 +32,7 @@ public class form_cubes : MonoBehaviour
     // Problem 3c inverses
     private RenderTexture inv_render;
     private GameObject InvPlane;
-    public Vector3 ShaderParams = new Vector3(1.0f, -1.6f, 2.5f);
+    private Vector3 ShaderParams;
 
     // Start method
     void Start(){
@@ -49,12 +49,20 @@ public class form_cubes : MonoBehaviour
         // Add image effects to camera (problems 1 + 2)
         cam.gameObject.AddComponent(typeof(camera));
 
+        // Light scene (problem 0)
+        GameObject lightGameObject = new GameObject("Light");
+        Light lightComp = lightGameObject.AddComponent<Light>();
+        lightComp.color = Color.white;
+        lightGameObject.transform.position = new Vector3((float) (NoCubes[0] - 1), (float) (NoCubes[1] - 1), -1.5f);
+        lightGameObject.hideFlags = HideFlags.HideInHierarchy;
+
         // Build cubes (problem 0)
         for(int x=0; x<NoCubes[0]; x++){
             List<GameObject> cubesY = new List<GameObject>();
             for(int y=0; y<NoCubes[1]; y++){
                 cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 cube.transform.position = new Vector3(0.0f + 2.0f * x, 0.0f + 2.0f * y, 0.0f);
+                cube.transform.rotation = Quaternion.Euler(0.0f, 48.0f, 0.0f);
                 
                 cube.GetComponent<Renderer>().material.color = Color.white;
                 obj_shader = Shader.Find("Shaders/cubes");
@@ -67,19 +75,25 @@ public class form_cubes : MonoBehaviour
             cubes.Add(cubesY);
         }
 
-        cam.GetComponent<camera>().ShaderType = ShaderType;
+        // Set type of distortion to produce (i.e. select question 0,1,2,3,3c)
+        cam.GetComponent<camera>().DistortionType = DistortionType;
 
-        if(ShaderType == 2){
+        if (DistortionType < 2 || DistortionType > 4){
+            // if problem 0, 1 (or > 3) use basic camera
+            cam.targetTexture = null;
+            cam.targetDisplay = 0;
+
+        } else if(DistortionType == 2){
+            // Problem 2
             // Update camera fields given LCA colour shift parameters (problem 2)
             cam.GetComponent<camera>().RedShift = RedShift;
             cam.GetComponent<camera>().GreenShift = GreenShift;
             cam.GetComponent<camera>().BlueShift = BlueShift;
 
-            plane_camera.targetTexture = null;
-            plane_camera.targetDisplay = 1;
             cam.targetTexture = null;
             cam.targetDisplay = 0;
-        } else if(ShaderType == 3){
+
+        } else if(DistortionType == 3){
             // PROBLEM 3
             // Create a render texture to project the camera onto the mesh
             render_tex = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
@@ -100,13 +114,14 @@ public class form_cubes : MonoBehaviour
             // Set the target texture of the main camera to the render texture
             cam.targetTexture = render_tex;
             plane_camera.targetDisplay = 0;
-        } else if(ShaderType == 4){
-            // PROBLEM 3
-            // Create a render texture to project the camera onto the mesh
+
+        } else if(DistortionType == 4){
+            // PROBLEM 3c
+            // Create a 1st render texture to project the camera onto the mesh
             render_tex = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
             render_tex.Create();
 
-            // Create a new camera to render the mesh to the screen
+            // Create a new 2nd camera to render the mesh to the screen
             plane_camera = gameObject.AddComponent(typeof(Camera)) as Camera;
             plane_camera.orthographic = true;
             plane_camera.aspect = 1.0f;
@@ -115,28 +130,29 @@ public class form_cubes : MonoBehaviour
             plane_camera.orthographicSize = 3.0f;
             plane_camera.transform.position = new Vector3(2.0f, 2.0f, -10.0f);
 
-            // Generate plane from Blender
+            // Generate new 1st plane from Blender
             BlenderPlane = createPlane(BlenderPlane);
 
-            // PROBLEM 3c
+            // Create a 2nd plane and render texture for the inverse distortion
             inv_render = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
             inv_render.Create();
             InvPlane = createPlane(InvPlane, "inverse");
-            // for plane1 (-0.13, -1.6, 2.5)
-            // for plane1 (-0.74, 0.19, 2.5)
-            // for plane2 (-0.87, 0.28, 2.8)
-            // for plane3 (-1.5, 0.8, 5.0)
+
+            // set c1 c2 and scaling parameters for the inverse mesh
+            if (MeshComplexity == 0 || MeshComplexity > 2){
+                ShaderParams = new Vector3(0.08f, -0.118f, 90.0f);
+            } else if (MeshComplexity == 1){
+                ShaderParams = new Vector3(0.45f, -0.8f, 25.0f);
+            } else if (MeshComplexity == 2){
+                ShaderParams = new Vector3(1.0f, -4.0f, 25.0f);
+            }
+
             InvPlane.GetComponent<Renderer>().material.SetVector("_Params", ShaderParams);
             
+            // Set rendering location
             cam.targetTexture = render_tex;
             plane_camera.targetTexture = inv_render;
-        } else {
-            // plane_camera.targetTexture = null;
-            // plane_camera.targetDisplay = 1;
-            cam.targetTexture = null;
-            cam.targetDisplay = 0;
         }
-
     }
 
     // Update method
@@ -151,6 +167,7 @@ public class form_cubes : MonoBehaviour
 
     GameObject createPlane(GameObject plane, String version = "")
     {
+        // Creates plane from blender - select one of 3 types in inspector
         Destroy(plane);
 
         if (MeshComplexity == 0 || MeshComplexity > 2){
@@ -164,6 +181,7 @@ public class form_cubes : MonoBehaviour
             plane.transform.localScale = new Vector3(3f, 3f, 0.0f);
         }
         
+        // Set plane position and attributes
         if(version == "inverse"){
             plane.transform.position = new Vector3(2.0f, 2.0f, -22.0f);
         } else {
@@ -174,7 +192,6 @@ public class form_cubes : MonoBehaviour
         plane.hideFlags = HideFlags.HideInHierarchy;
 
         // Apply the (camera rendered) texture to this plane
-
         if(version == "inverse"){
             obj_shader = Shader.Find("Shaders/inverse_mesh");
             plane.GetComponent<Renderer>().material.mainTexture = inv_render;

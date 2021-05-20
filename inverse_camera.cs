@@ -11,6 +11,7 @@ public class inverse_camera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Generate new 3rd camera to render contents of second mesh to screen
         inv_camera = gameObject.AddComponent(typeof(Camera)) as Camera;
         inv_camera.orthographic = true;
         inv_camera.aspect = 1.0f;
@@ -20,17 +21,19 @@ public class inverse_camera : MonoBehaviour
         inv_camera.transform.position = new Vector3(2.0f, 2.0f, -18.0f);
         inv_camera.targetDisplay = 2;
 
+        // If problem 3c, render this 3rd camera to the display
         cam = Camera.main;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        stype = cam.GetComponent<camera>().ShaderType;
+        stype = cam.GetComponent<camera>().DistortionType;
         if(stype == 4){
             inv_camera.targetDisplay = 0;
         } else {
             inv_camera.targetDisplay = 2;
         }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
     }
 }
