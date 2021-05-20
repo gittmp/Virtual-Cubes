@@ -4,7 +4,7 @@
 
 The different levels of the project, given by the different problem tasks, can be executed through selecting the 'Distortion' prefab under the hierarchy view, and manipulating its parameters in the inspector view.
 
-N.B. If the aforementioned prefab does not appear in the hierarchy view, navigate to the 'Assets' directory within the project view, and drag and drop both the 'Distortion' and 'Inverse' prefabs (indicated by blue cubes) into the hierarchy view.
+N.B. If the aforementioned prefab does not appear in the hierarchy view, navigate to the 'Assets' directory within the project view, and drag and drop both the 'Distortion' and 'Inverse' prefabs (indicated by blue cubes) into the hierarchy view (the 'Inverse' prefab is solely used for the problem 3c 3rd camera).
 
 The parameters available to the user to play with are as follows (these should be selected before you press play on the scene, as this generates the most efficient performance):
 - **Distortion Type**
@@ -20,11 +20,11 @@ The parameters available to the user to play with are as follows (these should b
   - Possiblve values: any integer i >= 0
 - **Angle Per Second**
   - The angle at which the cubes within the grid rotate around the X, Y, and Z axes per second.
+  - N.B. this is the only parameter which can be manipulated during runtime to generate observable changes.
   - Possible values: any positive or negative float
 - **Red Shift**, **Green Shift**, **Blue Shift**
   - The extent of chromatic aberration to the red, green, and blue colour channels (both laterally X and vertically Y).
   - N.B. only takes effect if *Distortion Type = 2* is selected.
-  - N.B.B this is the only parameter which can be manipulated during runtime to generate observable results.
   - Possible values: any positive or negative float
 - **Mesh Complexity**
   - The complexity of the mesh to which the scene is projected during mesh-based distortion.

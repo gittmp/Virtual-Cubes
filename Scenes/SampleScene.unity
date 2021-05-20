@@ -409,11 +409,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: DistortionType
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: MeshComplexity
-      value: 2
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
+      propertyPath: AnglePerSecond.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568951660744751842, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
+      propertyPath: AnglePerSecond.y
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 3014661953683521008, guid: 4bc0342732b6e42a285b3fd4d401f6d9, type: 3}
       propertyPath: m_Name
